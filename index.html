@@ -1,62 +1,1039 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>joyeux anniversaire elly</title>
-<style>
-  body {
-    margin: 0;
-    background-color: #dcebd5;
-    /* pour mettre une image en fond : décommente la ligne en dessous et mets ton image dans le dossier */
-    /* background-image: url("fond.jpg"); background-size: cover; background-attachment: fixed; */
-    color: #1f2d1f;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 19px;
-    line-height: 1.7;
-  }
+  <meta charset="utf-8">
+  <title>Record – Fleurenoul</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    /* Reset basique */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  .texte {
-    max-width: 620px;
-    margin: 60px auto;
-    padding: 30px 35px;
-    background: rgba(255, 255, 255, 0.75);
-  }
+    /* Couleurs du dossier (changent quand on sélectionne la preuve "Verte") */
+    body {
+      --panel: #006aa9;
+      --panel-border: #004f7a;
+      --panel-deep: #00538a;
+      --header-a: #005a8f;
+      --header-b: #007cc1;
+      --slot-a: #00a3ff;
+      --slot-b: #0063a3;
+      --slot-border: #00456f;
+      --accent: #ffd948;
+      --accent-dark: #c69e27;
+      --accent-ink: #754c16;
+    }
 
-  h1 {
-    font-size: 34px;
-    font-weight: normal;
-    margin-top: 0;
-  }
+    body.theme-vert {
+      --panel: #1e8a3c;
+      --panel-border: #135e28;
+      --panel-deep: #16702f;
+      --header-a: #177033;
+      --header-b: #25a74b;
+      --slot-a: #43d86d;
+      --slot-b: #1a7d38;
+      --slot-border: #0f5222;
+    }
 
-  @media (max-width: 600px) {
-    body { font-size: 17px; }
-    .texte { margin: 20px 12px; padding: 22px 20px; }
-    h1 { font-size: 28px; }
-  }
-</style>
+    /* Fond tribunal : mets ici ton image */
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #000;
+      background-image: url("courtroom-bg.jpg"); /* remplace par le nom de ta photo si besoin */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Panneau type Court Record */
+    .evidence-menu {
+      position: relative;
+      z-index: 1;
+      width: min(900px, 100%);
+      background: var(--panel);
+      border-radius: 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.6);
+      border: 4px solid var(--panel-border);
+      overflow: hidden;
+      opacity: 0; /* sera révélé après l'animation */
+      transition: opacity 0.5s ease-out, background-color 0.4s, border-color 0.4s;
+    }
+
+    .evidence-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 16px;
+      background: linear-gradient(to right, var(--header-a), var(--header-b));
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .evidence-header-left,
+    .evidence-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-tab {
+      background: #ffffff;
+      color: var(--header-a);
+      padding: 4px 10px;
+      border-radius: 4px 4px 0 0;
+      font-size: 13px;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+    }
+
+    .header-title {
+      letter-spacing: 0.04em;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .page-indicator {
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.85;
+      white-space: nowrap;
+    }
+
+    /* Zone de détails (texte de la preuve/fandom) */
+    .evidence-details {
+      background: #ffffff;
+      color: #222;
+      padding: 12px 18px 14px;
+      border-bottom: 3px solid #b5b5b5;
+      font-size: 14px;
+      min-height: 170px;
+    }
+
+    .evidence-title {
+      background: var(--accent);
+      padding: 6px 10px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border: 1px solid var(--accent-dark);
+    }
+
+    .evidence-body {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    /* Grande vignette de la preuve, à gauche */
+    .evidence-thumb {
+      flex: 0 0 76px;
+      width: 76px;
+      height: 76px;
+      border-radius: 6px;
+      border: 3px solid var(--slot-border);
+      background: linear-gradient(to bottom, var(--slot-a), var(--slot-b));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: background 0.4s, border-color 0.4s;
+    }
+
+    .evidence-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .evidence-thumb .slot-icon {
+      width: 48px;
+      height: 48px;
+      font-size: 24px;
+    }
+
+    .evidence-content { flex: 1; min-width: 0; }
+
+    .evidence-text {
+      margin-bottom: 8px;
+      line-height: 1.45;
+    }
+
+    .evidence-notes {
+      font-size: 13px;
+      color: #444;
+      border-top: 1px dashed #bbb;
+      padding-top: 6px;
+    }
+
+    .evidence-notes:empty { display: none; }
+
+    .btn-enter {
+      margin-top: 10px;
+      display: inline-block;
+      background: var(--panel);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.4);
+    }
+
+    .btn-enter[hidden] { display: none; }
+
+    .btn-enter:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.4);
+    }
+
+    /* Icônes / slots de preuve */
+    .evidence-icons {
+      padding: 6px 12px 12px;
+      background: var(--panel);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.4s;
+    }
+
+    .arrow-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      color: var(--accent-ink);
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+    }
+
+    .arrow-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.5);
+    }
+
+    .slots-row {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 4px;
+      padding: 4px;
+      background: var(--panel-deep);
+      border-radius: 6px;
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,0.3);
+    }
+
+    .slot {
+      height: 58px;
+      border-radius: 4px;
+      border: 2px solid var(--slot-border);
+      background: linear-gradient(to bottom, var(--slot-a), var(--slot-b));
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      font: inherit;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s;
+    }
+
+    .slot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.35), transparent 65%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .slot.empty {
+      cursor: default;
+      opacity: 0.35;
+    }
+
+    .slot-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--accent);
+      border: 2px solid var(--accent-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      line-height: 1;
+      color: var(--accent-ink);
+      font-weight: 800;
+    }
+
+    .slot-icon.two-letters { font-size: 13px; letter-spacing: -0.02em; }
+
+    /* Pastille spéciale pour la preuve "Verte" */
+    .slot-icon.vert {
+      background: #2ecc57;
+      border-color: #157a31;
+    }
+
+    .slot-label {
+      position: absolute;
+      bottom: 2px;
+      left: 2px;
+      right: 2px;
+      font-size: 9px;
+      text-align: center;
+      color: #eef7ff;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+      pointer-events: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .slot:not(.empty):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+      border-color: #ffe486;
+    }
+
+    .slot.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255,217,72,0.8);
+    }
+
+    .slot:focus-visible,
+    .arrow-btn:focus-visible,
+    .btn-enter:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 2px;
+    }
+
+    /* Ligne de texte façon dialogue en bas */
+    .dialogue-bar {
+      background: #001118;
+      color: #58ff58;
+      font-family: "Courier New", monospace;
+      padding: 8px 16px;
+      font-size: 13px;
+      min-height: 2.6em;
+      line-height: 1.4;
+      border-top: 2px solid #0c3c0c;
+      cursor: pointer;
+    }
+
+    /* Overlay transition de jour Ace Attorney-like */
+    .day-transition {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 999;
+      cursor: pointer;
+    }
+
+    .day-band {
+      width: 100%;
+      max-width: 1300px;
+      background: #000814;
+      border-top: 2px solid #0c3c0c;
+      padding: 18px 32px 20px;
+      box-shadow: 0 -6px 0 rgba(0,0,0,0.8);
+      transform: translateY(100%);
+      text-align: center;
+      animation: day-band-slide 0.7s ease-out forwards,
+                 day-band-exit 0.7s ease-in 2.3s forwards;
+    }
+
+    .day-line {
+      font-family: "Courier New", monospace;
+      color: #58ff58;
+      font-size: 18px;
+      text-shadow: 0 1px 0 #002b00;
+    }
+
+    .day-date { margin-bottom: 4px; }
+    .day-court { font-weight: bold; }
+
+    @keyframes day-band-slide {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0%); }
+    }
+
+    @keyframes day-band-exit {
+      from { transform: translateY(0%); opacity: 1; }
+      to   { transform: translateY(100%); opacity: 0; }
+    }
+
+    /* Overlay easter egg "gay" */
+    .gay-easter-egg {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .gay-easter-egg-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+    }
+
+    .gay-easter-egg-content {
+      position: relative;
+      z-index: 1001;
+      background: #000814;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.8);
+      max-width: 640px;
+      width: 90%;
+    }
+
+    .gay-easter-egg-content video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
+
+    .gay-close-btn {
+      margin-top: 8px;
+      display: inline-block;
+      background: #006aa9;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.4);
+    }
+
+    .gay-close-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.4);
+    }
+
+    /* Bouton carré pour couper la musique en bas à droite */
+    .bg-music-toggle {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      width: 18px;
+      height: 18px;
+      border-radius: 2px;
+      border: none;
+      background: #24c924;        /* vert = musique active */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      cursor: pointer;
+      z-index: 1002;
+    }
+
+    .bg-music-toggle.muted {
+      background: #c92424;        /* rouge = musique coupée */
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      body { padding: 10px; }
+
+      .evidence-menu { border-width: 3px; }
+
+      .evidence-details { font-size: 13px; }
+
+      .evidence-thumb {
+        flex-basis: 56px;
+        width: 56px;
+        height: 56px;
+      }
+
+      .evidence-thumb .slot-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+      }
+
+      .slot { height: 54px; }
+
+      .header-tab { display: none; }
+
+      .header-title { font-size: 11px; }
+    }
+
+    /* Si l'appareil demande moins d'animations */
+    @media (prefers-reduced-motion: reduce) {
+      .slot, .slot:not(.empty):hover { transition: none; transform: none; }
+    }
+  </style>
 </head>
 <body>
+  <!-- Overlay animation de jour (clic pour passer) -->
+  <div class="day-transition" id="day-transition" title="Cliquer pour passer">
+    <div class="day-band">
+      <p class="day-line day-date" id="day-date"></p>
+      <p class="day-line day-court">Tribunal de Fleurenoul</p>
+    </div>
+  </div>
 
-<div class="texte">
-  <h1>Joyeux anniversaire Elly</h1>
+  <!-- Panneau principal type Court Record -->
+  <main class="evidence-menu" id="evidence-menu" aria-label="Record de Fleurenoul">
+    <header class="evidence-header">
+      <div class="evidence-header-left">
+        <div class="header-tab">Record</div>
+        <div class="header-title">Dossier de Fleurenoul</div>
+      </div>
+      <div class="evidence-header-right">
+        <span class="page-indicator" id="page-indicator"></span>
+      </div>
+    </header>
 
-  <p>Aujourd'hui c'est ton anniversaire. J'arrêtais pas de réfléchir à te faire quelque chose de spécial que personne d'autre ne t'aurait fait, mais j'avais pas trop d'idées, alors j'me suis dit qu'un site avec un beau message, ça serait sympa...</p>
+    <section class="evidence-details">
+      <div class="evidence-title" id="evidence-title">
+        Bienvenue dans le multivers de Fleurenoul
+      </div>
+      <div class="evidence-body">
+        <div class="evidence-thumb" id="evidence-thumb">
+          <div class="slot-icon">?</div>
+        </div>
+        <div class="evidence-content">
+          <p class="evidence-text" id="evidence-text">
+            Choisis une preuve dans la barre du bas pour ouvrir le dossier d'un de ses centres d'intérêt.
+          </p>
+          <p class="evidence-notes" id="evidence-notes">Conseil : commence par ITZY ou Ace Attorney.</p>
+          <button class="btn-enter" id="btn-enter" type="button" hidden>
+            Entrer dans ce fandom
+          </button>
+        </div>
+      </div>
+    </section>
 
-  <p>Je vais te le redire mais : te rencontrer, c'est sincèrement la meilleure chose qui me soit arrivée dans ma vie. Pas une des meilleures, LA meilleure.</p>
+    <nav class="evidence-icons" aria-label="Sélection des fandoms">
+      <button class="arrow-btn" type="button" id="arrow-left" aria-label="Preuve précédente">&lt;</button>
+      <div class="slots-row" id="slots-row">
+        <!-- rempli dynamiquement en JS -->
+      </div>
+      <button class="arrow-btn" type="button" id="arrow-right" aria-label="Preuve suivante">&gt;</button>
+    </nav>
 
-  <p>Avec toi j'peux parler de tout, je t'ai dit des choses que je n'ai jamais dites à personne, je peux rire de tout et me sentir à ma place. Tu rends mes journées plus drôles et plus belles, et quand il m'arrive un truc bien, c'est à toi que j'ai envie de le raconter en premier.</p>
+    <div class="dialogue-bar" id="dialogue-bar" aria-live="polite">
+      La cour ouvre la séance. Premier témoignage : « la coupe feel me like ». Aucune objection.
+    </div>
+  </main>
 
-  <p>Je t'aime énormément et je suis vraiment fier d'être ton ami.</p>
+  <!-- Overlay easter egg vidéo -->
+  <div class="gay-easter-egg" id="gay-easter-egg">
+    <div class="gay-easter-egg-backdrop"></div>
+    <div class="gay-easter-egg-content">
+      <video id="gay-video" src="toi-t-es-gay-toi.mp4" controls></video>
+      <button type="button" class="gay-close-btn" id="gay-close-btn">Fermer</button>
+    </div>
+  </div>
 
-  <p>Merci d'exister.<br>
-  Merci d'être toi.</p>
+  <!-- Musique de fond + bouton mute -->
+  <audio id="bg-music" src="Phoenix-Wright-Ace-Attorney-OST-Logic-and-Trick.mp3" loop></audio>
+  <button type="button" id="bg-music-toggle" class="bg-music-toggle" aria-label="Couper la musique"></button>
 
-  <p>Je te souhaite une année pleine de bonheur, de rires, de Shamain (mdrr) et de belles journées avec Yoruko sur ton île.</p>
+  <script>
+    /* =====================================================
+       LES PREUVES
+       - icon  : 1 ou 2 lettres, ou un emoji
+       - image : (optionnel) photo dans le même dossier, ex. "shamain.jpg".
+                 Si le fichier n'existe pas, l'icône s'affiche à la place.
+       - notes : laisse "" pour masquer la ligne
+       - theme : "vert" passe tout le dossier en vert
+       ===================================================== */
+    const fandoms = [
+      {
+        id: "itzy",
+        shortLabel: "ITZY",
+        icon: "I",
+        page: "itzy.html",
+        title: "ITZY",
+        text: "ITZY est un girl group K‑pop de 5 membres que Fleurenoul adore.",
+        notes: "Fleurenoul est OT5 : il les aime toutes les cinq, sans exception.",
+        dialogue: "Cette preuve montre à quel point Fleurenoul est MIDZY."
+      },
+      {
+        id: "ace-attorney",
+        shortLabel: "Ace Att.",
+        icon: "A",
+        page: "ace-attorney.html",
+        title: "Ace Attorney",
+        text: "Série de visual novels judiciaires où Phoenix Wright et Hunter/Edgeworth s'affrontent dans des procès dramatiques. Fleurenoul connaît les affaires par cœur.",
+        notes: "Pères adoptifs officiels de Fleurenoul : Phoenix et Hunter.",
+        dialogue: "Cette preuve laisse entendre que Fleurenoul aime le narumitsu."
+      },
+      {
+        id: "mlp",
+        shortLabel: "MLP",
+        icon: "M",
+        page: "mlp.html",
+        title: "My Little Pony",
+        text: "Univers coloré centré sur l'amitié et des poneys.",
+        notes: "",
+        dialogue: "Cette preuve a été découverte à Ponyville. Elle sent un peu la barbe à papa, et démontre sans le moindre doute que l'amitié, c'est magique."
+      },
+      {
+        id: "ici-tout-commence",
+        shortLabel: "ITC",
+        icon: "C",
+        page: "ici-tout-commence.html",
+        title: "Ici tout commence",
+        text: "Série française qui suit le quotidien d'une école de cuisine, avec drama, relations et intrigues.",
+        notes: "",
+        dialogue: "Cette preuve rappelle à quel point Fleurenoul aime les intrigues. Et teyssier ce gros enculé."
+      },
+      {
+        id: "xlov",
+        shortLabel: "XLOV",
+        icon: "X",
+        page: "xlov.html",
+        title: "XLOV",
+        text: "HARU MY BELOVED HARU PLS AAAAAAAH",
+        notes: "",
+        dialogue: "IMMA BE A OUUHOUUHOUUUUUUUU..."
+      },
+      {
+        id: "farod",
+        shortLabel: "Farod",
+        icon: "F",
+        page: "farod.html",
+        title: "Farodgames",
+        text: "Farod, créateur français.",
+        notes: "GAY (écrit gay sur ton clavier)",
+        dialogue: "d'après fleurenoul farod est vraiment d̶é̶b̶i̶l̶e̶  bilingue "
+      },
+      {
+        id: "pandora-hearts",
+        shortLabel: "Pandora",
+        icon: "PH",
+        page: "pandora-hearts.html",
+        title: "Pandora Hearts",
+        text: "Manga de Jun Mochizuki. Le jour de sa cérémonie de passage à l'âge adulte, Oz Vessalius est précipité dans l'Abysse, où il rencontre Alice, le B-Rabbit.",
+        notes: "",
+        dialogue: "Cette preuve a été retrouvée au fond de l'Abysse."
+      },
+      {
+        id: "one-piece",
+        shortLabel: "One Piece",
+        icon: "OP",
+        page: "one-piece.html",
+        title: "One Piece",
+        text: "Le manga d'Eiichiro Oda qui suit Luffy et l'équipage du Chapeau de paille, partis à la recherche du trésor légendaire.",
+        notes: "Personnages préférés : Luffy, et SURTOUT Yamato.",
+        dialogue: "Cette preuve a été repêchée sur Grand Line."
+      },
+      {
+        id: "yoruko",
+        shortLabel: "Yoruko",
+        icon: "Yk",
+        page: "yoruko.html",
+        title: "Yoruko",
+        text: "L'Hôtesse ultime de Super Danganronpa Another 2. Et surtout, l'autre moitié du Fleuruko : Fleurenoul et Yoruko, en couple et en train de vivre leur meilleure vie.",
+        notes: "Nom du couple : le Fleuruko.",
+        dialogue: "Cette preuve a été retrouvée dans le salon de l'Hôtesse ultime, entre deux tasses de thé. Elle est irréfutable : le Fleuruko est le couple le plus solide de tout le tribunal."
+      },
+      {
+        id: "bungo-stray-dogs",
+        shortLabel: "BSD",
+        icon: "BS",
+        page: "bungo-stray-dogs.html",
+        title: "Bungo Stray Dogs",
+        text: "Manga de Kafka Asagiri et Sango Harukawa. L'Agence des détectives armés affronte la mafia de Yokohama, avec des personnages et des pouvoirs inspirés de grands écrivains.",
+        notes: "Personnage préféré : Dazai.",
+        dialogue: "Cette preuve a été déposée à l'Agence des détectives armés, à Yokohama. Dazai prétend l'avoir trouvée dans une rivière."
+      },
+      {
+        id: "yena",
+        shortLabel: "YENA",
+        icon: "YN",
+        page: "yena.html",
+        title: "YENA",
+        text: "Choi Yena, ancienne membre d'IZ*ONE, en solo depuis 2022.",
+        notes: "",
+        dialogue: "Cette preuve a été retrouvée sur une scène de concert, couverte de confettis."
+      },
+      {
+        id: "got7",
+        shortLabel: "GOT7",
+        icon: "7",
+        page: "got7.html",
+        title: "GOT7",
+        text: "Boys band K-pop de sept membres, apparu en 2014.",
+        notes: "Fleurenoul est OT7 : il les aime tous les sept.",
+        dialogue: "Cette preuve a été versée au dossier par sept témoins différents. Leurs sept témoignages concordent : Fleurenoul est un vrai Ahgase."
+      },
+      {
+        id: "jeux",
+        shortLabel: "Jeux",
+        icon: "🎮",
+        page: "jeux.html",
+        title: "Animal Crossing, Yandere Simulator, FNAF, Undertale",
+        text: "Un village paisible, un lycée inquiétant, une pizzeria hantée et un monde souterrain.",
+        notes: "",
+        dialogue: "Ces preuves ont été récupérées sur une île d'Animal Crossing, dans un lycée japonais, dans une pizzeria fermée la nuit et sous une montagne. Aucun lien entre elles, sauf Fleurenoul."
+      },
+      {
+        id: "danganronpa",
+        shortLabel: "Dangan.",
+        icon: "D",
+        page: "danganronpa.html",
+        title: "Danganronpa",
+        text: "Série de Spike Chunsoft : des lycéens enfermés, des meurtres, et des procès de classe pour démasquer le coupable.",
+        notes: "",
+        dialogue: "Cette preuve a été retrouvée dans une salle de procès de classe. Monokuma nie toute implication."
+      },
+      {
+        id: "shamain",
+        shortLabel: "Shamain",
+        icon: "🐈",
+        image: "shamain.jpg",
+        page: "shamain.html",
+        title: "Shamain",
+        text: "Le chat de Fleurenoul, et probablement le témoin le plus mignon de toute l'histoire judiciaire.",
+        notes: "",
+        dialogue: "MIAOUUUUUU MIIIIAAAAAAAAAOUUUUUUUUUUUUUUUUUUU MIAOU MIAOU MIAOU"
+      },
+      {
+        id: "vert",
+        shortLabel: "Vert",
+        icon: "",
+        iconClass: "vert",
+        theme: "vert",
+        page: "vert.html",
+        title: "La couleur verte",
+        text: "La meilleure couleur d'après fleurenoul.",
+        notes: "",
+        dialogue: "Cette preuve a été retrouvée à côté d'une tulipe."
+      },
+      {
+        id: "lettre-anniversaire",
+        shortLabel: "Lettre",
+        icon: "💌",
+        page: "anniversaire.html",
+        button: "Lire la lettre",
+        title: "Lettre d'anniversaire",
+        text: "La lettre qu'option228 a écrite à Fleurenoul pour son anniversaire.",
+        notes: "",
+        dialogue: "Cette preuve a été retrouvée dans une enveloppe scellée, déposée par option228."
+      }
+    ];
 
-  <p>Joyeux anniversaire Elly<br>
-  Joyeux anniversaire Fleurenoul</p>
-</div>
+    // Date du jour dans le bandeau d'intro (ex. "28 septembre 2026")
+    document.getElementById("day-date").textContent =
+      new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
+    const slotsRow = document.getElementById("slots-row");
+    const titleEl = document.getElementById("evidence-title");
+    const textEl = document.getElementById("evidence-text");
+    const notesEl = document.getElementById("evidence-notes");
+    const thumbEl = document.getElementById("evidence-thumb");
+    const enterBtn = document.getElementById("btn-enter");
+    const dialogueBar = document.getElementById("dialogue-bar");
+    const arrowLeft = document.getElementById("arrow-left");
+    const arrowRight = document.getElementById("arrow-right");
+    const pageIndicator = document.getElementById("page-indicator");
+    const menu = document.getElementById("evidence-menu");
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const smallScreen = window.matchMedia("(max-width: 700px)");
+
+    let currentIndex = -1;   // -1 = écran d'accueil, aucune preuve choisie
+    let currentPage = 0;
+
+    function storageGet(key) {
+      try { return sessionStorage.getItem(key); } catch (e) { return null; }
+    }
+    function storageSet(key, value) {
+      try { sessionStorage.setItem(key, value); } catch (e) { /* rien */ }
+    }
+
+    function pageSize() {
+      return smallScreen.matches ? 4 : 8;
+    }
+
+    function pageCount() {
+      return Math.ceil(fandoms.length / pageSize());
+    }
+
+    // Crée l'icône ronde d'une preuve
+    function makeIcon(fandom) {
+      const icon = document.createElement("div");
+      icon.className = "slot-icon";
+      if (fandom.iconClass) icon.classList.add(fandom.iconClass);
+      const isLetters = /^[A-Za-z0-9]{2}$/.test(fandom.icon);
+      if (isLetters) icon.classList.add("two-letters");
+      icon.textContent = fandom.icon;
+      return icon;
+    }
+
+    // Affiche les cases de la page courante
+    function renderSlots() {
+      const size = pageSize();
+      slotsRow.innerHTML = "";
+      slotsRow.style.gridTemplateColumns = `repeat(${size}, minmax(0, 1fr))`;
+
+      const start = currentPage * size;
+      for (let i = start; i < start + size; i++) {
+        const slot = document.createElement("button");
+        slot.type = "button";
+        slot.className = "slot";
+
+        if (i >= fandoms.length) {
+          slot.classList.add("empty");
+          slot.disabled = true;
+          slot.setAttribute("aria-hidden", "true");
+          slotsRow.appendChild(slot);
+          continue;
+        }
+
+        const fandom = fandoms[i];
+        slot.dataset.index = i;
+        slot.setAttribute("aria-label", fandom.title);
+        if (i === currentIndex) slot.classList.add("active");
+
+        const label = document.createElement("div");
+        label.className = "slot-label";
+        label.textContent = fandom.shortLabel;
+
+        slot.appendChild(makeIcon(fandom));
+        slot.appendChild(label);
+        slot.addEventListener("click", () => selectFandom(i));
+        slotsRow.appendChild(slot);
+      }
+
+      pageIndicator.textContent = `Page ${currentPage + 1}/${pageCount()}`;
+    }
+
+    // Grande vignette dans la zone de détails
+    function renderThumb(fandom) {
+      thumbEl.innerHTML = "";
+      if (fandom.image) {
+        const img = document.createElement("img");
+        img.src = fandom.image;
+        img.alt = fandom.title;
+        img.onerror = () => {
+          if (fandoms[currentIndex] !== fandom) return; // on a déjà changé de preuve
+          thumbEl.innerHTML = "";
+          thumbEl.appendChild(makeIcon(fandom));
+        };
+        thumbEl.appendChild(img);
+      } else {
+        thumbEl.appendChild(makeIcon(fandom));
+      }
+    }
+
+    /* Texte qui défile lettre par lettre, comme dans le jeu.
+       Un clic sur la barre affiche tout d'un coup. */
+    let typingTimer = null;
+    let typingFull = "";
+
+    function typeDialogue(text) {
+      clearInterval(typingTimer);
+      typingFull = text;
+      if (reduceMotion) {
+        dialogueBar.textContent = text;
+        return;
+      }
+      let i = 0;
+      dialogueBar.textContent = "";
+      typingTimer = setInterval(() => {
+        i++;
+        dialogueBar.textContent = text.slice(0, i);
+        if (i >= text.length) clearInterval(typingTimer);
+      }, 22);
+    }
+
+    dialogueBar.addEventListener("click", () => {
+      clearInterval(typingTimer);
+      dialogueBar.textContent = typingFull || dialogueBar.textContent;
+    });
+
+    function selectFandom(index) {
+      currentIndex = index;
+      const fandom = fandoms[index];
+
+      // Changer de page si la preuve n'est pas sur la page affichée
+      const page = Math.floor(index / pageSize());
+      if (page !== currentPage) {
+        currentPage = page;
+        renderSlots();
+      }
+
+      document.querySelectorAll(".slot").forEach((slotEl) => {
+        slotEl.classList.toggle("active", Number(slotEl.dataset.index) === index);
+      });
+
+      titleEl.textContent = fandom.title;
+      textEl.textContent = fandom.text;
+      notesEl.textContent = fandom.notes || "";
+      renderThumb(fandom);
+      typeDialogue(fandom.dialogue);
+
+      document.body.classList.toggle("theme-vert", fandom.theme === "vert");
+
+      enterBtn.hidden = !fandom.page;
+      enterBtn.textContent = fandom.button || "Entrer dans ce fandom";
+      storageSet("fleurenoul-preuve", String(index));
+    }
+
+    enterBtn.addEventListener("click", () => {
+      const fandom = fandoms[currentIndex];
+      if (fandom && fandom.page) window.location.href = fandom.page;
+    });
+
+    function move(step) {
+      const base = currentIndex === -1 ? (step > 0 ? -1 : 0) : currentIndex;
+      const newIndex = (base + step + fandoms.length) % fandoms.length;
+      selectFandom(newIndex);
+    }
+
+    arrowLeft.addEventListener("click", () => move(-1));
+    arrowRight.addEventListener("click", () => move(1));
+
+    // Flèches du clavier aussi
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") move(1);
+      if (e.key === "ArrowLeft") move(-1);
+    });
+
+    // Si la taille d'écran change, on recalcule les pages
+    smallScreen.addEventListener("change", () => {
+      currentPage = currentIndex === -1 ? 0 : Math.floor(currentIndex / pageSize());
+      renderSlots();
+    });
+
+    renderSlots();
+
+    // Si on revient d'une page fandom, on retrouve la dernière preuve ouverte
+    const savedIndex = Number(storageGet("fleurenoul-preuve"));
+    const hasSaved = storageGet("fleurenoul-preuve") !== null && fandoms[savedIndex];
+
+    /* Animation d'entrée : jouée une seule fois par visite,
+       pas à chaque retour depuis une page fandom. Clic pour passer. */
+    (function () {
+      const transition = document.getElementById("day-transition");
+      let done = false;
+
+      function showMenu() {
+        if (done) return;
+        done = true;
+        if (transition) transition.style.display = "none";
+        menu.style.opacity = "1";
+        storageSet("fleurenoul-intro-vue", "1");
+        if (hasSaved) selectFandom(savedIndex);
+      }
+
+      if (storageGet("fleurenoul-intro-vue")) {
+        showMenu();
+      } else {
+        transition.addEventListener("click", showMenu);
+        setTimeout(showMenu, 3000); // 0.7 + 1.6 + 0.7 secondes
+      }
+    })();
+
+    /* Easter egg : quand on tape "gay" au clavier, lancer la vidéo */
+    (function () {
+      const overlay = document.getElementById("gay-easter-egg");
+      const video = document.getElementById("gay-video");
+      const closeBtn = document.getElementById("gay-close-btn");
+
+      let buffer = "";
+
+      function openEasterEgg() {
+        if (!overlay || !video) return;
+        overlay.style.display = "flex";
+        video.currentTime = 0;
+        video.play().catch(() => {
+          // si l'autoplay est bloqué, l'utilisateur peut cliquer sur play
+        });
+      }
+
+      function closeEasterEgg() {
+        if (!overlay || !video) return;
+        video.pause();
+        overlay.style.display = "none";
+        buffer = "";
+      }
+
+      if (closeBtn) closeBtn.addEventListener("click", closeEasterEgg);
+
+      if (overlay) {
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay || e.target.classList.contains("gay-easter-egg-backdrop")) {
+            closeEasterEgg();
+          }
+        });
+      }
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeEasterEgg();
+      });
+
+      window.addEventListener("keydown", (e) => {
+        const tag = document.activeElement.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+        const key = e.key.toLowerCase();
+        if (key.length === 1 && key.match(/[a-z]/)) {
+          buffer = (buffer + key).slice(-3);
+          if (buffer === "gay") openEasterEgg();
+        }
+      });
+    })();
+
+    /* Musique de fond : Logic and Trick, en boucle, avec bouton carré mute */
+    (function () {
+      const music = document.getElementById("bg-music");
+      const toggle = document.getElementById("bg-music-toggle");
+      if (!music || !toggle) return;
+
+      music.volume = 0.6;
+      let hasStarted = false;
+
+      function startMusic() {
+        if (hasStarted) return;
+        hasStarted = true;
+        music.play().catch(() => {
+          hasStarted = false; // bloqué : on réessaiera à la prochaine interaction
+        });
+      }
+
+      // Première interaction -> la musique démarre
+      document.addEventListener("click", startMusic);
+      document.addEventListener("keydown", startMusic);
+
+      // Le carré : s'il est cliqué en premier, il lance la musique au lieu de la couper
+      toggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!hasStarted) {
+          music.muted = false;
+          startMusic();
+        } else {
+          music.muted = !music.muted;
+        }
+        toggle.classList.toggle("muted", music.muted);
+        toggle.setAttribute("aria-label", music.muted ? "Remettre la musique" : "Couper la musique");
+      });
+    })();
+  </script>
 </body>
 </html>
