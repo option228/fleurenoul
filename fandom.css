@@ -1,0 +1,190 @@
+/* style commun des pages fandom
+   les couleurs se changent en haut de chaque page */
+
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+a { color: var(--lien); }
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 16px 14px 50px;
+}
+
+.retour {
+  font-size: 13px;
+}
+
+/* en-tête */
+.titre {
+  margin-top: 18px;
+  border-bottom: 4px solid var(--c1);
+  padding-bottom: 6px;
+}
+
+.titre small {
+  font-family: "Courier New", monospace;
+  color: var(--gris);
+}
+
+.titre h1 {
+  margin: 2px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 46px;
+  font-weight: normal;
+  color: var(--c1);
+}
+
+.chapo {
+  font-size: 15px;
+  margin: 14px 0 0;
+}
+
+/* titres de parties */
+h2 {
+  margin: 34px 0 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: normal;
+  font-size: 24px;
+  color: var(--c1);
+  border-bottom: 1px solid var(--trait);
+}
+
+h3 { margin: 18px 0 4px; font-size: 15px; }
+
+p { margin: 0 0 10px; }
+
+/* fiche à droite, façon wiki */
+.fiche {
+  float: right;
+  width: 260px;
+  margin: 18px 0 14px 22px;
+  border: 1px solid var(--trait);
+  background: var(--boite);
+  font-size: 13px;
+}
+
+.fiche-titre {
+  background: var(--c1);
+  color: var(--sur-c1);
+  font-weight: bold;
+  text-align: center;
+  padding: 5px;
+}
+
+.fiche img {
+  width: 100%;
+  display: block;
+}
+
+.fiche table { width: 100%; border-collapse: collapse; }
+
+.fiche th, .fiche td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 8px;
+  border-top: 1px solid var(--trait);
+}
+
+.fiche th { width: 38%; color: var(--gris); font-weight: normal; }
+
+/* membres */
+.membre {
+  display: flex;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px dotted var(--trait);
+}
+
+.membre-photo {
+  flex: 0 0 90px;
+  width: 90px;
+  height: 90px;
+  background: var(--boite);
+  border: 1px solid var(--trait);
+  overflow: hidden;
+}
+
+.membre-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.membre h3 { margin-top: 0; }
+
+.membre h3 span { font-weight: normal; color: var(--gris); font-size: 13px; }
+
+/* chronologie et discographie */
+.dates { width: 100%; border-collapse: collapse; }
+
+.dates td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--trait);
+  vertical-align: top;
+}
+
+.dates td:first-child {
+  width: 110px;
+  font-family: "Courier New", monospace;
+  color: var(--c1);
+  font-weight: bold;
+}
+
+/* petit mot perso */
+.mot {
+  margin-top: 30px;
+  padding: 10px 14px;
+  border-left: 4px solid var(--c2);
+  background: var(--boite);
+  font-style: italic;
+}
+
+/* vidéos */
+.video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  margin-bottom: 12px;
+}
+
+.dialogue {
+  clear: both;
+  margin-top: 40px;
+  background: #001118;
+  color: #58ff58;
+  font-family: "Courier New", monospace;
+  padding: 10px 14px;
+}
+
+.pied {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--gris);
+  text-align: center;
+}
+
+@media (max-width: 620px) {
+  .fiche { float: none; width: auto; margin: 16px 0; }
+  .titre h1 { font-size: 36px; }
+  .membre-photo { flex-basis: 70px; width: 70px; height: 70px; }
+}
+
+/* carré pour couper la musique, en bas à droite (comme sur l'accueil) */
+.bouton-musique {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 2px;
+  background: #24c924;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  cursor: pointer;
+}
+
+.bouton-musique.coupe { background: #c92424; }
