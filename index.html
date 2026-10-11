@@ -432,25 +432,6 @@
       box-shadow: 0 1px 0 rgba(0,0,0,0.4);
     }
 
-    /* Bouton carré pour couper la musique en bas à droite */
-    .bg-music-toggle {
-      position: fixed;
-      right: 12px;
-      bottom: 12px;
-      width: 18px;
-      height: 18px;
-      border-radius: 2px;
-      border: none;
-      background: #24c924;        /* vert = musique active */
-      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-      cursor: pointer;
-      z-index: 1002;
-    }
-
-    .bg-music-toggle.muted {
-      background: #c92424;        /* rouge = musique coupée */
-    }
-
     /* Responsive */
     @media (max-width: 700px) {
       body { padding: 10px; }
@@ -547,9 +528,8 @@
     </div>
   </div>
 
-  <!-- Musique de fond + bouton mute -->
-  <audio id="bg-music" src="Phoenix-Wright-Ace-Attorney-OST-Logic-and-Trick.mp3" loop></audio>
-  <button type="button" id="bg-music-toggle" class="bg-music-toggle" aria-label="Couper la musique"></button>
+  <!-- Musique de fond (le bouton et le volume sont ajoutés par musique.js) -->
+  <audio id="musique" src="Phoenix-Wright-Ace-Attorney-OST-Logic-and-Trick.mp3" loop></audio>
 
   <script>
     /* =====================================================
@@ -999,41 +979,7 @@
         }
       });
     })();
-
-    /* Musique de fond : Logic and Trick, en boucle, avec bouton carré mute */
-    (function () {
-      const music = document.getElementById("bg-music");
-      const toggle = document.getElementById("bg-music-toggle");
-      if (!music || !toggle) return;
-
-      music.volume = 0.6;
-      let hasStarted = false;
-
-      function startMusic() {
-        if (hasStarted) return;
-        hasStarted = true;
-        music.play().catch(() => {
-          hasStarted = false; // bloqué : on réessaiera à la prochaine interaction
-        });
-      }
-
-      // Première interaction -> la musique démarre
-      document.addEventListener("click", startMusic);
-      document.addEventListener("keydown", startMusic);
-
-      // Le carré : s'il est cliqué en premier, il lance la musique au lieu de la couper
-      toggle.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (!hasStarted) {
-          music.muted = false;
-          startMusic();
-        } else {
-          music.muted = !music.muted;
-        }
-        toggle.classList.toggle("muted", music.muted);
-        toggle.setAttribute("aria-label", music.muted ? "Remettre la musique" : "Couper la musique");
-      });
-    })();
   </script>
+  <script src="musique.js"></script>
 </body>
 </html>
